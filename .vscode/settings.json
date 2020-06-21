@@ -1,0 +1,9 @@
+{
+	"deno.enable": false,
+	"typescript.validate.enable": false,
+	"javascript.validate.enable": false,
+	"emmet.includeLanguages": {
+		"javascript": "javascriptreact"
+	},
+	"prettier.semi": false
+}
