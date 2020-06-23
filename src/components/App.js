@@ -11,7 +11,7 @@ const App = () => {
 	return (
 		<Container>
 			<Row className='justify-content-center'>
-				<h1>Transport Compare</h1>
+				<h2>Transport Compare</h2>
 			</Row>
 			<Row>
 				<Col>

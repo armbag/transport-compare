@@ -48,11 +48,13 @@ const Campar = () => {
 			.then((res) => res.text())
 			.then((data) => {
 				console.log('it worked!')
-				console.log(data)
-				let parser = new DOMParser(),
-					xmlDoc = parser.parseFromString(data, 'text/xml')
+
+				let parser = new DOMParser()
+				let xmlDoc = parser.parseFromString(data, 'text/xml')
 				const response = xmlDoc.getElementsByTagName('ns:return')[0]
+				console.log(response)
 				if (response.getElementsByTagName('ax25:error').innerHTML) {
+					console.log(response)
 					return setResponse(
 						response.getElementsByTagName('ax25:error')[0].innerHTML
 					)
