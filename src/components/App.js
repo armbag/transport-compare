@@ -20,11 +20,6 @@ const App = () => {
 			</Row>
 			<Row>
 				<Col>
-					<Classement />
-				</Col>
-			</Row>
-			<Row>
-				<Col>
 					<NationeX />
 				</Col>
 				<Col>

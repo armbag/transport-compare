@@ -48,6 +48,7 @@ const Campar = () => {
 			.then((res) => res.text())
 			.then((data) => {
 				console.log('it worked!')
+				console.log(data)
 				let parser = new DOMParser(),
 					xmlDoc = parser.parseFromString(data, 'text/xml')
 				const response = xmlDoc.getElementsByTagName('ns:return')[0]
