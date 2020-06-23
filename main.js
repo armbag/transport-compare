@@ -80,5 +80,4 @@ app.on('activate', () => {
 	}
 })
 
-// Stop error
 app.allowRendererProcessReuse = true
