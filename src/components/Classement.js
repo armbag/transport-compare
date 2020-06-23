@@ -4,7 +4,7 @@ import Table from 'react-bootstrap/Table'
 const Classement = (props) => {
 	const { resNation, resCampar } = props
 
-	console.log('from inside!!!    ')
+	console.log('in Classement    ')
 	console.log(resNation)
 	console.log(resCampar)
 

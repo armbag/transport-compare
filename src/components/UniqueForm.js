@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import rateShipment_req from './TransportFunctions/rateShipment_req'
+require('dotenv').config()
 
 const UniqueForm = () => {
 	const [destination, setDestination] = useState('J9B2C3')
