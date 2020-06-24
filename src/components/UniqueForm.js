@@ -25,7 +25,7 @@ const UniqueForm = () => {
 	useEffect(() => {
 		camparBody = rateShipment_req(weight, destination, codCharge, quantity)
 		nationBody = {
-			CustomerId: process.env.NATION_ID,
+			CustomerId: 136850,
 			DestPostalCode: destination,
 			CODPrice: codCharge,
 			ShippingType: 1,
@@ -36,7 +36,7 @@ const UniqueForm = () => {
 		nationRequestOpt = {
 			method: 'POST',
 			headers: {
-				Authorization: process.env.NATION_API,
+				Authorization: 'AISDJA6I6OCUY6ELG3GFRRSUXHRJV',
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify(nationBody),
