@@ -1,6 +1,7 @@
 const path = require('path')
 const url = require('url')
-const { app, BrowserWindow } = require('electron')
+const axios = require('axios')
+const { app, BrowserWindow, ipcMain } = require('electron')
 
 let mainWindow
 
@@ -67,6 +68,72 @@ function createMainWindow() {
 }
 
 app.on('ready', createMainWindow)
+
+function filtered(data) {
+	const allowed = ['NCV', 'Price']
+	const res = Object.keys(data)
+		.filter((key) => allowed.includes(key))
+		.reduce((obj, key) => {
+			obj[key] = data[key]
+			return obj
+		}, {})
+	return res
+}
+
+ipcMain.on('nation:fetch', (e, data) => {
+	console.log('coming form nation:fetch : receiving the data ==> \n', data)
+	const configNation = {
+		method: 'post',
+		url: 'https://apidev.nationex.com/api/ShippingV2/GetPrice',
+		headers: {
+			Authorization: 'AISDJA6I6OCUY6ELG3GFRRSUXHRJV',
+			'Content-Type': 'application/json',
+		},
+		data: data,
+	}
+	axios(configNation)
+		.then((response) => {
+			console.log(response.data)
+			return sendNationBack(filtered(response.data))
+		})
+		.catch((error) => console.log(error))
+})
+
+ipcMain.on('canpar:fetch', (e, data) => {
+	const configCanpar = {
+		method: 'post',
+		url: 'https://sandbox.canpar.com/canshipws/services/CanparRatingService',
+		headers: {
+			'content-type': 'application/soap+xml',
+		},
+		data: data,
+	}
+
+	axios(configCanpar)
+		.then((response) => {
+			// TODO parse it here before sending the response
+			sendCanparBack(response.data)
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+})
+
+async function sendNationBack(response) {
+	try {
+		mainWindow.webContents.send('nation:response', JSON.stringify(response))
+	} catch (err) {
+		console.log(err)
+	}
+}
+
+async function sendCanparBack(response) {
+	try {
+		mainWindow.webContents.send('canpar:response', response)
+	} catch (err) {
+		console.log(err)
+	}
+}
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {

@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import rateShipment_req from './TransportFunctions/rateShipment_req'
+import { ipcRenderer } from 'electron'
 require('dotenv').config()
 
 const UniqueForm = () => {
@@ -13,14 +14,40 @@ const UniqueForm = () => {
 	const [weight, setWeight] = useState('50')
 	const [codCharge, setCodCharge] = useState('0.00')
 	const [quantity, setQuantity] = useState('1')
-	const [resCampar, setResCampar] = useState({ name: 'Campar' })
+	const [resCanpar, setResCanpar] = useState({ name: 'Campar' })
 	const [resNation, setResNation] = useState({ name: 'NationeX' })
-	const [response, setResponse] = useState([])
 	const [isLoading, setIsLoading] = useState(false)
 	let camparBody
+	let canparBody2
 	let nationBody
 	let nationRequestOpt
 	let camparRequestOpt
+
+	useEffect(() => {
+		ipcRenderer.on('nation:response', (e, response) => {
+			setResNation({ ...resNation, ...JSON.parse(response) })
+		})
+		ipcRenderer.on('canpar:response', (e, response) => {
+			let parser = new DOMParser()
+			let xmlDoc = parser.parseFromString(response, 'text/xml')
+			const res = xmlDoc.getElementsByTagName('ns:return')[0]
+			if (res.getElementsByTagName('ax25:error').innerHTML) {
+				setResCanpar({
+					...resCanpar,
+					error: res.getElementsByTagName('ax25:error')[0].innerHTML,
+				})
+			} else {
+				setResCanpar({
+					...resCanpar,
+					TaxCharge: res.getElementsByTagName('ax27:tax_charge_1')[0].innerHTML,
+					FuelCharge: res.getElementsByTagName('ax27:fuel_surcharge')[0]
+						.innerHTML,
+					Price: res.getElementsByTagName('ax27:total')[0].innerHTML,
+				})
+			}
+			setIsLoading(false)
+		})
+	}, [resNation, resCanpar])
 
 	useEffect(() => {
 		camparBody = rateShipment_req(weight, destination, codCharge, quantity)
@@ -32,75 +59,13 @@ const UniqueForm = () => {
 			ParcelNb: quantity,
 			TotalWeight: weight,
 		}
-
-		nationRequestOpt = {
-			method: 'POST',
-			headers: {
-				Authorization: 'AISDJA6I6OCUY6ELG3GFRRSUXHRJV',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(nationBody),
-		}
-		camparRequestOpt = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'text/html',
-				// 'X-Requested-With': 'Fetch',
-			},
-			body: camparBody,
-			redirect: 'follow',
-		}
 	}, [weight, destination, codCharge, quantity])
 
-	function filtered(data) {
-		const allowed = ['NCV', 'Price']
-		const res = Object.keys(data)
-			.filter((key) => allowed.includes(key))
-			.reduce((obj, key) => {
-				obj[key] = data[key]
-				return obj
-			}, {})
-		return res
-	}
 	function handleBothFetch(e) {
 		e.preventDefault()
 		setIsLoading(true)
-
-		// first nationeX
-		const nationUrl = 'https://apidev.nationex.com/api/ShippingV2/GetPrice'
-		fetch(nationUrl, nationRequestOpt)
-			.then((res) => res.json())
-			.then((data) => setResNation({ ...resNation, ...filtered(data) }))
-			.catch((error) => setResNation({ resNation, ...error }))
-
-		// then campar
-		const proxyUrl = 'https://powerful-taiga-45132.herokuapp.com/'
-		const camparUrl =
-			'https://sandbox.canpar.com/canshipws/services/CanparRatingService'
-
-		fetch(proxyUrl + camparUrl, camparRequestOpt)
-			.then((res) => res.text())
-			.then((data) => {
-				let parser = new DOMParser(),
-					xmlDoc = parser.parseFromString(data, 'text/xml')
-				const res = xmlDoc.getElementsByTagName('ns:return')[0]
-				if (res.getElementsByTagName('ax25:error').innerHTML) {
-					setResCampar(res.getElementsByTagName('ax25:error')[0].innerHTML)
-				} else {
-					setResCampar({
-						...resCampar,
-						TaxCharge: res.getElementsByTagName('ax27:tax_charge_1')[0]
-							.innerHTML,
-						FuelCharge: res.getElementsByTagName('ax27:fuel_surcharge')[0]
-							.innerHTML,
-						Price: res.getElementsByTagName('ax27:total')[0].innerHTML,
-					})
-				}
-			})
-			.catch((error) => setResCampar({ ...resCampar, ...error }))
-			.finally(() => {
-				setIsLoading(false)
-			})
+		ipcRenderer.send('nation:fetch', JSON.stringify(nationBody))
+		ipcRenderer.send('canpar:fetch', camparBody)
 	}
 
 	return (
@@ -150,8 +115,8 @@ const UniqueForm = () => {
 				</Card.Body>
 			</Card>
 			{isLoading ? 'Loading...' : ''}
-			{resCampar.Price && resNation.Price && (
-				<Classement resCampar={resCampar} resNation={resNation} />
+			{resCanpar.Price && resNation.Price && (
+				<Classement resCanpar={resCanpar} resNation={resNation} />
 			)}
 		</>
 	)

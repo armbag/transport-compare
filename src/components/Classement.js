@@ -2,23 +2,19 @@ import React, { useEffect } from 'react'
 import Table from 'react-bootstrap/Table'
 
 const Classement = (props) => {
-	const { resNation, resCampar } = props
+	const { resNation, resCanpar } = props
 
-	console.log('in Classement    ')
-	console.log(resNation)
-	console.log(resCampar)
-
-	function ordered(resNation, resCampar) {
+	function ordered(resNation, resCanpar) {
 		let res = []
-		if (resNation.Price <= resCampar.Price) {
-			res = [resNation, resCampar]
+		if (resNation.Price <= resCanpar.Price) {
+			res = [resNation, resCanpar]
 		} else {
-			res = [resCampar, resNation]
+			res = [resCanpar, resNation]
 		}
 		return res
 	}
 
-	let res = ordered(resNation, resCampar)
+	let res = ordered(resNation, resCanpar)
 
 	return (
 		<Table striped bordered>
