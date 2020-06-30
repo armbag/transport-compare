@@ -92,10 +92,7 @@ ipcMain.on('nation:fetch', (e, data) => {
 		data: data,
 	}
 	axios(configNation)
-		.then((response) => {
-			console.log(response.data)
-			return sendNationBack(filtered(response.data))
-		})
+		.then((response) => sendNationBack(filtered(response.data)))
 		.catch((error) => console.log(error))
 })
 
