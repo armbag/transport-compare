@@ -1,84 +1,61 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { ipcRenderer } from 'electron'
 import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
-
 import rateShipment_req from './TransportFunctions/rateShipment_req'
 
 const Campar = () => {
 	const [billed_weight, setBilled_weight] = useState('50')
 	const [cod_charge, setCod_charge] = useState('0.00')
 	const [postal_code_delivery, setPostal_code_delivery] = useState('J9B2C3')
-	const [qty, setQty] = useState('1')
-	const [response, setResponse] = useState([])
+	const [quantity, setQuantity] = useState('1')
+	const [response, setResponse] = useState({})
 	const [isLoading, setIsLoading] = useState(false)
-	let rateShipmentTry
+
+	const canparBody = useRef(
+		rateShipment_req(billed_weight, postal_code_delivery, cod_charge, quantity)
+	)
 
 	useEffect(() => {
-		rateShipmentTry = rateShipment_req(
+		canparBody.current = rateShipment_req(
 			billed_weight,
 			postal_code_delivery,
 			cod_charge,
-			qty
+			quantity
 		)
-	}, [billed_weight, postal_code_delivery, cod_charge, qty])
+	}, [billed_weight, postal_code_delivery, cod_charge, quantity])
+
+	useEffect(() => {
+		ipcRenderer.on('canpar:response', (e, resp) => {
+			let parser = new DOMParser()
+			let xmlDoc = parser.parseFromString(resp, 'text/xml')
+			const res = xmlDoc.getElementsByTagName('ns:return')[0]
+			if (res.getElementsByTagName('ax25:error').innerHTML) {
+				setResponse({
+					Error: res.getElementsByTagName('ax25:error')[0].innerHTML,
+				})
+			} else {
+				setResponse({
+					TaxCharge: res.getElementsByTagName('ax27:tax_charge_1')[0].innerHTML,
+					FuelCharge: res.getElementsByTagName('ax27:fuel_surcharge')[0]
+						.innerHTML,
+					Price: res.getElementsByTagName('ax27:total')[0].innerHTML,
+				})
+			}
+		})
+		return () => {
+			setIsLoading(false)
+		}
+	}, [response])
 
 	function handleSubmitFetch(e) {
 		e.preventDefault()
 		setIsLoading(true)
-		const requestOptions = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'text/html',
-				// 'X-Requested-With': 'Fetch',
-			},
-			body: rateShipmentTry,
-			redirect: 'follow',
-		}
-
-		const proxyUrl = 'https://powerful-taiga-45132.herokuapp.com/'
-		fetch(
-			proxyUrl +
-				'https://sandbox.canpar.com/canshipws/services/CanparRatingService',
-			requestOptions
-		)
-			.then((res) => res.text())
-			.then((data) => {
-				console.log('it worked!')
-
-				let parser = new DOMParser()
-				let xmlDoc = parser.parseFromString(data, 'text/xml')
-				const response = xmlDoc.getElementsByTagName('ns:return')[0]
-				console.log(response)
-				if (response.getElementsByTagName('ax25:error').innerHTML) {
-					console.log(response)
-					return setResponse(
-						response.getElementsByTagName('ax25:error')[0].innerHTML
-					)
-				} else {
-					return setResponse([
-						{
-							'Tax charge': response.getElementsByTagName(
-								'ax27:tax_charge_1'
-							)[0].innerHTML,
-						},
-						{
-							'Fuel Charge': response.getElementsByTagName(
-								'ax27:fuel_surcharge'
-							)[0].innerHTML,
-						},
-						{ Total: response.getElementsByTagName('ax27:total')[0].innerHTML },
-					])
-				}
-			})
-			.catch((error) => {
-				console.log(error)
-				return setResponse([{ 'Server Error': 'bad request' }])
-			})
-			.finally(() => setIsLoading(false))
+		ipcRenderer.send('canpar:fetch', canparBody.current)
 	}
 
 	return (
@@ -111,8 +88,8 @@ const Campar = () => {
 						<Form.Group controlId='ladingQty'>
 							<Form.Label>Lading Quantity</Form.Label>
 							<Form.Control
-								value={qty}
-								onChange={(e) => setQty(e.target.value)}
+								value={quantity}
+								onChange={(e) => setQuantity(e.target.value)}
 							/>
 						</Form.Group>
 						<Button type='submit' variant='secondary' block>
@@ -125,15 +102,13 @@ const Campar = () => {
 				'Loading...'
 			) : (
 				<ListGroup>
-					{response.map((fields) =>
-						Object.keys(fields).map((field) => {
-							return (
-								<ListGroup.Item key={fields[field]}>
-									{field}: {fields[field]}
-								</ListGroup.Item>
-							)
-						})
-					)}
+					{Object.keys(response).map((key) => {
+						return (
+							<ListGroup.Item key={key}>
+								{key}: {response[key]}
+							</ListGroup.Item>
+						)
+					})}
 				</ListGroup>
 			)}
 		</>

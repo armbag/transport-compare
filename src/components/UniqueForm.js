@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import Classement from './Classement'
+import { ipcRenderer } from 'electron'
 import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Classement from './Classement'
 import rateShipment_req from './TransportFunctions/rateShipment_req'
-import { ipcRenderer } from 'electron'
+import { useRef } from 'react'
 require('dotenv').config()
 
 const UniqueForm = () => {
@@ -17,11 +18,17 @@ const UniqueForm = () => {
 	const [resCanpar, setResCanpar] = useState({ name: 'Campar' })
 	const [resNation, setResNation] = useState({ name: 'NationeX' })
 	const [isLoading, setIsLoading] = useState(false)
-	let camparBody
-	let canparBody2
-	let nationBody
-	let nationRequestOpt
-	let camparRequestOpt
+	const canparBody = useRef(
+		rateShipment_req(weight, destination, codCharge, quantity)
+	)
+	const nationBody = useRef({
+		CustomerId: process.env.NATION_ID,
+		DestPostalCode: destination,
+		CODPrice: codCharge,
+		ShippingType: 1,
+		ParcelNb: quantity,
+		TotalWeight: weight,
+	})
 
 	useEffect(() => {
 		ipcRenderer.on('nation:response', (e, response) => {
@@ -50,9 +57,14 @@ const UniqueForm = () => {
 	}, [resNation, resCanpar])
 
 	useEffect(() => {
-		camparBody = rateShipment_req(weight, destination, codCharge, quantity)
-		nationBody = {
-			CustomerId: 136850,
+		canparBody.current = rateShipment_req(
+			weight,
+			destination,
+			codCharge,
+			quantity
+		)
+		nationBody.current = {
+			CustomerId: process.env.NATION_ID,
 			DestPostalCode: destination,
 			CODPrice: codCharge,
 			ShippingType: 1,
@@ -64,8 +76,8 @@ const UniqueForm = () => {
 	function handleBothFetch(e) {
 		e.preventDefault()
 		setIsLoading(true)
-		ipcRenderer.send('nation:fetch', JSON.stringify(nationBody))
-		ipcRenderer.send('canpar:fetch', camparBody)
+		ipcRenderer.send('nation:fetch', JSON.stringify(nationBody.current))
+		ipcRenderer.send('canpar:fetch', canparBody.current)
 	}
 
 	return (

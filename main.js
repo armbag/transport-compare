@@ -5,6 +5,8 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 
 let mainWindow
 
+require('dotenv').config()
+
 let isDev = false
 const isMac = process.plateform === 'darwin' ? true : false
 
@@ -81,12 +83,13 @@ function filtered(data) {
 }
 
 ipcMain.on('nation:fetch', (e, data) => {
-	console.log('coming form nation:fetch : receiving the data ==> \n', data)
+	console.log('coming from nation:fetch : receiving the data ==> \n', data)
+	console.log(process.env.NATION_API)
 	const configNation = {
 		method: 'post',
 		url: 'https://apidev.nationex.com/api/ShippingV2/GetPrice',
 		headers: {
-			Authorization: 'AISDJA6I6OCUY6ELG3GFRRSUXHRJV',
+			Authorization: process.env.NATION_API,
 			'Content-Type': 'application/json',
 		},
 		data: data,
@@ -97,6 +100,7 @@ ipcMain.on('nation:fetch', (e, data) => {
 })
 
 ipcMain.on('canpar:fetch', (e, data) => {
+	console.log('hey')
 	const configCanpar = {
 		method: 'post',
 		url: 'https://sandbox.canpar.com/canshipws/services/CanparRatingService',
@@ -120,7 +124,7 @@ async function sendNationBack(response) {
 	try {
 		mainWindow.webContents.send('nation:response', JSON.stringify(response))
 	} catch (err) {
-		console.log(err)
+		console.log('sendNationBack Error')
 	}
 }
 
@@ -128,7 +132,7 @@ async function sendCanparBack(response) {
 	try {
 		mainWindow.webContents.send('canpar:response', response)
 	} catch (err) {
-		console.log(err)
+		console.log('sendCanparBack Error')
 	}
 }
 
