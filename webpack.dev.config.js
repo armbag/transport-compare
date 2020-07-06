@@ -30,7 +30,8 @@ module.exports = {
 	plugins: [
 		new HtmlWebpackPlugin({ title: 'Transport Compare' }),
 		new webpack.DefinePlugin({
-			'process.env.NODE_ENV': JSON.stringify('development'),
+			__DEV__: true,
+			// 'process.env.NODE_ENV': JSON.stringify('development'),
 		}),
 	],
 	devtool: 'cheap-source-map',
