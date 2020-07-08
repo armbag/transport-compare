@@ -103,7 +103,6 @@ ipcMain.on('nation:fetch', (e, data) => {
 })
 
 ipcMain.on('canpar:fetch', (e, data) => {
-	console.log('hey')
 	const configCanpar = {
 		method: 'post',
 		url: 'https://sandbox.canpar.com/canshipws/services/CanparRatingService',

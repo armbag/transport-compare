@@ -82,7 +82,7 @@ const UniqueForm = () => {
 
 	return (
 		<>
-			<Card className='mt-4'>
+			<Card>
 				<Card.Title className='text-center mt-3 mb-3'>Generic Form</Card.Title>
 				<Card.Body>
 					<Form onSubmit={handleBothFetch}>
