@@ -45,13 +45,13 @@ export default function rawXML2(
 					<ns1:apply_association_discount xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">false</ns1:apply_association_discount>
 					<ns1:apply_individual_discount xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">false</ns1:apply_individual_discount>
 					<ns1:apply_invoice_discount xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">false</ns1:apply_invoice_discount>
-					<ns1:password xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">${process.env.CANPAR_PASSWORD}</ns1:password>
+					<ns1:password xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">demo852</ns1:password>
 					<shipment xmlns="http://ws.dto.canshipws.canpar.com/xsd">
 						<ns2:billed_weight xmlns:ns2="http://dto.canshipws.canpar.com/xsd">${billed_weight}</ns2:billed_weight>
 						<ns2:billed_weight_unit xmlns:ns2="http://dto.canshipws.canpar.com/xsd">L</ns2:billed_weight_unit>
 						<ns2:cod_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">${cod_charge}</ns2:cod_charge>
 						<ns2:cod_type xmlns:ns2="http://dto.canshipws.canpar.com/xsd">N</ns2:cod_type>
-						<ns2:collect_shipper_num xmlns:ns2="http://dto.canshipws.canpar.com/xsd">${process.env.CANPAR_SHIPPER_NUM}</ns2:collect_shipper_num>
+						<ns2:collect_shipper_num xmlns:ns2="http://dto.canshipws.canpar.com/xsd">99999992</ns2:collect_shipper_num>
 						<ns2:consolidation_type xmlns:ns2="http://dto.canshipws.canpar.com/xsd">${consolidation_type}</ns2:consolidation_type>
 						<ns2:cos xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:cos>
 						<ns2:cos_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:cos_charge>
@@ -115,7 +115,7 @@ export default function rawXML2(
 						<ns2:send_email_to_pickup xmlns:ns2="http://dto.canshipws.canpar.com/xsd">false</ns2:send_email_to_pickup>
 						<ns2:service_type xmlns:ns2="http://dto.canshipws.canpar.com/xsd">1</ns2:service_type>
 						<ns2:shipment_status xmlns:ns2="http://dto.canshipws.canpar.com/xsd">R</ns2:shipment_status>
-						<ns2:shipper_num xmlns:ns2="http://dto.canshipws.canpar.com/xsd">${process.env.CANPAR_SHIPPER_NUM}</ns2:shipper_num>
+						<ns2:shipper_num xmlns:ns2="http://dto.canshipws.canpar.com/xsd">99999992</ns2:shipper_num>
 						<ns2:shipping_date xmlns:ns2="http://dto.canshipws.canpar.com/xsd">2020-06-15T00:00:00.000-04:00</ns2:shipping_date>
 						<ns2:tax_charge_1 xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:tax_charge_1>
 						<ns2:tax_charge_2 xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:tax_charge_2>
@@ -128,7 +128,7 @@ export default function rawXML2(
 						<ns2:xc_charge xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0.0</ns2:xc_charge>
 						<ns2:zone xmlns:ns2="http://dto.canshipws.canpar.com/xsd">0</ns2:zone>
 					</shipment>
-					<ns1:user_id xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">${process.env.CANPAR_USER_ID}</ns1:user_id>
+					<ns1:user_id xmlns:ns1="http://ws.dto.canshipws.canpar.com/xsd">test@jlpapers.com</ns1:user_id>
 				</ns3:request>
 			</ns3:rateShipment>
 		</soapenv:Body>

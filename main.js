@@ -89,13 +89,14 @@ ipcMain.on('nation:fetch', (e, data) => {
 		method: 'post',
 		url: 'https://apidev.nationex.com/api/ShippingV2/GetPrice',
 		headers: {
-			Authorization: process.env.NATION_API,
-			'Content-Type': 'application/json',
+			Authorization: 'AISDJA6I6OCUY6ELG3GFRRSUXHRJV',
+			'content-type': 'application/json',
 		},
 		data: data,
 	}
 	axios(configNation)
 		.then((response) => {
+			console.log(response)
 			console.log(response.data)
 			return sendNationBack(filtered(response.data))
 		})

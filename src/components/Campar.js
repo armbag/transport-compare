@@ -34,6 +34,7 @@ const Campar = () => {
 			let parser = new DOMParser()
 			let xmlDoc = parser.parseFromString(resp, 'text/xml')
 			const res = xmlDoc.getElementsByTagName('ns:return')[0]
+			console.log(res)
 			if (res.getElementsByTagName('ax25:error').innerHTML) {
 				setResponse({
 					Error: res.getElementsByTagName('ax25:error')[0].innerHTML,
@@ -61,7 +62,7 @@ const Campar = () => {
 	return (
 		<>
 			<Card>
-				<Card.Title className='text-center mt-2'>Campar</Card.Title>
+				<Card.Title className='text-center mt-2'>Canpar</Card.Title>
 				<Card.Body>
 					<Form onSubmit={handleSubmitFetch}>
 						<Form.Group controlId='billed_weight'>

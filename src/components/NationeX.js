@@ -18,7 +18,7 @@ const NationeX = () => {
 	const [isLoading, setIsLoading] = useState(false)
 
 	const nationBody = useRef({
-		CustomerId: process.env.NATION_ID,
+		CustomerId: 136850,
 		DestPostalCode: destPostalCode,
 		ShippingType: shippingType,
 		CODPrice: codCharge,
@@ -28,7 +28,7 @@ const NationeX = () => {
 
 	useEffect(() => {
 		nationBody.current = {
-			CustomerId: process.env.NATION_ID,
+			CustomerId: 136850,
 			DestPostalCode: destPostalCode,
 			ShippingType: shippingType,
 			CODPrice: codCharge,
@@ -39,6 +39,7 @@ const NationeX = () => {
 
 	useEffect(() => {
 		ipcRenderer.on('nation:response', (e, response) => {
+			console.log(response)
 			setResponse({ ...JSON.parse(response) })
 		})
 		return () => {

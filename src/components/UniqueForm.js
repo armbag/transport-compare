@@ -15,14 +15,14 @@ const UniqueForm = () => {
 	const [weight, setWeight] = useState('50')
 	const [codCharge, setCodCharge] = useState('0.00')
 	const [quantity, setQuantity] = useState('1')
-	const [resCanpar, setResCanpar] = useState({ name: 'Campar' })
+	const [resCanpar, setResCanpar] = useState({ name: 'Canpar' })
 	const [resNation, setResNation] = useState({ name: 'NationeX' })
 	const [isLoading, setIsLoading] = useState(false)
 	const canparBody = useRef(
 		rateShipment_req(weight, destination, codCharge, quantity)
 	)
 	const nationBody = useRef({
-		CustomerId: process.env.NATION_ID,
+		CustomerId: 136850,
 		DestPostalCode: destination,
 		CODPrice: codCharge,
 		ShippingType: 1,
@@ -32,9 +32,11 @@ const UniqueForm = () => {
 
 	useEffect(() => {
 		ipcRenderer.on('nation:response', (e, response) => {
+			console.log('FROM UNIQ FORM NationeX API response : \n', response)
 			setResNation({ ...resNation, ...JSON.parse(response) })
 		})
 		ipcRenderer.on('canpar:response', (e, response) => {
+			console.log('FROM UNIQ FORM Canpar API response : \n', response)
 			let parser = new DOMParser()
 			let xmlDoc = parser.parseFromString(response, 'text/xml')
 			const res = xmlDoc.getElementsByTagName('ns:return')[0]
@@ -64,7 +66,7 @@ const UniqueForm = () => {
 			quantity
 		)
 		nationBody.current = {
-			CustomerId: process.env.NATION_ID,
+			CustomerId: 136850,
 			DestPostalCode: destination,
 			CODPrice: codCharge,
 			ShippingType: 1,
