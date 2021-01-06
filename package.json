@@ -21,7 +21,7 @@
 		"postpackage": "electron-packager . transport-compare --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icon.png --prune=true --out=release-builds"
 	},
 	"dependencies": {
-		"axios": "^0.19.2",
+		"axios": "^0.21.1",
 		"bootstrap": "^4.5.0",
 		"dotenv": "^8.2.0",
 		"react": "^16.13.1",
